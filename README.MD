@@ -1,5 +1,6 @@
 # Fixed-Point Quadratic Polynomial Analysis
 C & Python workflow to generate, compile, run, and analyze a fixed-point quadratic polynomial vs a floating-point reference. Includes visual comparison & statistical error metrics.
+This project is designed for cases where temperature is computed from an analog sensor output using a quadratic polynomial. The fixed-point implementation allows running on microcontrollers without floating-point hardware while maintaining accuracy close to the floating-point version.
 
 ## Files
 - `gen.py`: Generates `temp_calc.c/.h` from coefficients & scale.
@@ -24,3 +25,4 @@ make clean  # remove generated files
 ## Output
 - Plot: fixed-point vs floating-point outputs
 - Stats: MSE + paired t-test
+
