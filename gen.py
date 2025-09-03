@@ -3,10 +3,13 @@ import os
 # Define the coefficients and the fixed-point scale.
 # You can easily change these variables to generate new code.
 # The script will automatically calculate the fixed-point constants.
-Q_FRAC = 24
+Q_FRAC = 23
 A_FLOAT = 2.347383e-5
 B_FLOAT = 1.274251e-2
 C_FLOAT = -154.375
+TH_LOW_LIMIT_INT8_T = 814
+TH_HIGH_LIMIT_INT8_T = 3200
+
 
 def generate_fixed_point_constants(q_frac, a_float, b_float, c_float):
     """
@@ -39,6 +42,9 @@ static const int32_t A_Q = {a_q};
 static const int32_t B_Q = {b_q};
 static const int64_t C_Q = {c_q};
 
+#define TH_LOW_LIMIT_INT8_T {TH_LOW_LIMIT_INT8_T}
+#define TH_HIGH_LIMIT_INT8_T {TH_HIGH_LIMIT_INT8_T}
+
 /* ---------- fixed-point helpers ---------- */
 static inline int32_t q_to_int(int32_t q)
 {{
@@ -67,7 +73,9 @@ int32_t temp_calc_q(int32_t mv)
 
 int32_t temp_calc_int(int32_t mv)
 {{
-    return q_to_int(temp_calc_q(mv));
+    if(mv >= TH_HIGH_LIMIT_INT8_T) return q_to_int(temp_calc_q(TH_HIGH_LIMIT_INT8_T));
+    else if (mv <= TH_LOW_LIMIT_INT8_T) return q_to_int(temp_calc_q(TH_LOW_LIMIT_INT8_T));
+    else  return q_to_int(temp_calc_q(mv));
 }}
 
 /* ---------- floating-point quadratic ---------- */

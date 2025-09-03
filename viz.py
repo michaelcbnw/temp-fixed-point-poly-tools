@@ -46,26 +46,36 @@ def main():
     else:
         print('  The difference between the float and fixed-point results is not statistically significant.')
 
-    fig, ax = plt.subplots(figsize=(8, 5))
+    # Create a figure with two subplots stacked vertically
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 8), sharex=True, gridspec_kw={'height_ratios': [3, 1]})
 
-    # Plot curves
-    ax.plot(df['mv'], df['ref_float'],
-            label='Float reference', color='tab:blue')
-    ax.plot(df['mv'], df['q_fixed_point_float'],
-            label='Q fixed-point', color='tab:orange', ls='--')
+    # Plot curves on the top subplot (ax1)
+    ax1.plot(df['mv'], df['ref_float'],
+             label='Float reference', color='tab:blue')
+    ax1.plot(df['mv'], df['q_fixed_point_float'],
+             label='Q fixed-point', color='tab:orange', ls='--')
+    ax1.scatter(df['mv'], df['q_fixed_point_int'],
+                label='Q rounded (°C)', color='tab:green', s=12)
 
-    # Optional: show rounded integer °C as dots
-    ax.scatter(df['mv'], df['q_fixed_point_int'],
-               label='Q rounded (°C)', color='tab:green', s=12)
+    # Cosmetics for the top subplot
+    ax1.set_ylabel('Temperature (°C)')
+    ax1.set_title('Quadratic polynomial: float vs fixed-point')
+    ax1.legend()
+    ax1.grid(True, ls=':')
 
-    # cosmetics
-    ax.set_xlabel('Input (mV)')
-    ax.set_ylabel('Temperature (°C)')
-    ax.set_title('Quadratic polynomial: float vs fixed-point')
-    ax.legend()
-    ax.grid(True, ls=':')
+    # Plot the absolute error on the bottom subplot (ax2)
+    ax2.plot(df['mv'], df['err_abs'],
+             label='Absolute Error', color='tab:red')
 
-    # print worst-case error
+    # Cosmetics for the bottom subplot
+    ax2.set_xlabel('Input (mV)')
+    ax2.set_ylabel('Absolute Error (°C)')
+    ax2.set_title('Absolute Error')
+    ax2.grid(True, ls=':')
+    ax2.legend()
+    ax2.set_ylim(bottom=0)  # Ensure the error plot starts at zero
+
+    # Print worst-case error
     worst = df['err_abs'].max()
     print(f'Worst absolute error: {worst:.4f} °C')
 
